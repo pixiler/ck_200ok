@@ -2,24 +2,26 @@ version: '3'
 
 services:
   httpservers:
-    build: /http
+    build: ./http
     volumes:
-      - .:/code
-    ports:
-      - "0.0.0.0:8000-8010:8080"
+      - ./http:/code
+    expose:
+      - "8080"
     environment:
       - SERVICE_PORTS=8080
     networks: 
       - web
 
   haproxy:
-    build: ./haproxy
+    image: haproxy:1.7
     depends_on:
       - httpservers
     ports:
       - 127.0.0.1:8080:80
     links:
       - httpservers
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     networks: 
       - web
 
