@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  httpservers:
+    build: /http
+    volumes:
+      - .:/code
+    ports:
+      - "0.0.0.0:8000-8010:8080"
+    environment:
+      - SERVICE_PORTS=8080
+    networks: 
+      - web
+
+  haproxy:
+    build: ./haproxy
+    depends_on:
+      - httpservers
+    ports:
+      - 127.0.0.1:8080:80
+    links:
+      - httpservers
+    networks: 
+      - web
+
+networks: 
+  web:
+    driver: bridge
